@@ -12,7 +12,10 @@ This repo contains the source code for our bot that manages time and other funct
 - Private study rooms
 - Study plylists and Study material shared by our members
 
-<iframe src="https://discord.com/widget?id=843086218120134666&theme=dark" width="500" height="300" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+<center>
+
+![Discord](https://img.shields.io/discord/843086218120134666?label=Join%20us&logo=discord&logoColor=white&style=for-the-badge)
+</center>
 
 ## How to run the bot locally
 
