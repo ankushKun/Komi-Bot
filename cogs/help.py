@@ -5,16 +5,15 @@ from datetime import datetime
 from pytz import timezone
 
 
-
 class Help(commands.Cog):
-    def __init__(self,bot):
-        self.bot=bot
+    def __init__(self, bot):
+        self.bot = bot
 
     @commands.command()
-    async def help(self,ctx):
+    async def help(self, ctx):
         now = datetime.now(timezone("GMT"))
-        last_day = calendar.monthrange(now.year,now.month)[1]
-        dsc=f"""
+        last_day = calendar.monthrange(now.year, now.month)[1]
+        dsc = f"""
 prefix : `\`
 
 `studytime`
@@ -30,10 +29,16 @@ daily reset - Everyday 12AM GMT | {23-now.hour} hours left
 weekly reset - Monday 12AM GMT | {7-now.weekday()} days left
 monthly reset - First day of the month 12AM GMT | {last_day-now.day} days left
 
+Github Links
+Organisation : https://github.com/KomiStudy
+Bot Repo : https://github.com/KomiStudy/Komi-Bot
 """
-        emb = discord.Embed(title="Komi~San sent help",description=dsc,color=0xFFFFFF)
+        emb = discord.Embed(
+            title="Komi~San sends help", description=dsc, color=0xFFFFFF
+        )
         await ctx.send(embed=emb)
+
 
 def setup(bot):
     bot.add_cog(Help(bot))
-    print('---> HELP LOADED')
+    print("---> HELP LOADED")
