@@ -31,7 +31,7 @@ pip3 install -r requirements.txt
 
 ### Add API keys to .env and firabase.json
 
-Visit the discord developer portal and copy the bot token of your bot and paste it in `env.example` without any " "
+Visit the discord developer portal and copy the bot token of your bot and paste it in `env.example` without any " " then rename the file to `.env`
 
 Visit `console.firebase.google.com` and create a new project
 
