@@ -4,6 +4,7 @@ from discord.ext import commands, tasks
 from datetime import datetime
 from pytz import timezone
 import json
+from decouple import config as env
 
 LEVELS = [10, 50, 100, 200, 300, 400, 500, 1000, 2000, 5000]
 
@@ -16,7 +17,7 @@ if config["USE_FIREBASE_JSON"] == 1:  # 0 to use env, 1 to use json
     with open("firebase.json", "r") as read_file:
         firebase = pyrebase.initialize_app(json.load(read_file))
 else:
-    firebase = pyrebase.initialize_app(json.load(env("FIREBASE_CONFIG")))
+    firebase = pyrebase.initialize_app(json.loads(env("FIREBASE_CONFIG")))
 db = firebase.database()
 
 """ DATABASE STRUCTURE

@@ -17,7 +17,7 @@ if config["USE_FIREBASE_JSON"] == 1:  # 0 to use env, 1 to use json
     with open("firebase.json", "r") as read_file:
         firebase = pyrebase.initialize_app(json.load(read_file))
 else:
-    firebase = pyrebase.initialize_app(json.load(env("FIREBASE_CONFIG")))
+    firebase = pyrebase.initialize_app(json.loads(env("FIREBASE_CONFIG")))
 db = firebase.database()
 
 """ DATABASE STRUCTURE

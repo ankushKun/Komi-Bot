@@ -6,7 +6,7 @@ import json
 from datetime import datetime
 from pytz import timezone
 from decouple import config as env
-
+import traceback
 
 BOT_TOKEN = env("BOT_TOKEN")
 BOT_PREFIX = env("BOT_PREFIX")
@@ -41,7 +41,7 @@ def load_cogs():
             try:
                 bot.load_extension(f"cogs.{file[:-3]}")
             except Exception as e:
-                print(f"COG LOAD ERROR : {e}")
+                print(f"COG LOAD ERROR : {e}\n\n{traceback.format_exc()}\n\n")
 
 
 @bot.event
