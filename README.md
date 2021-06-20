@@ -14,7 +14,7 @@ This repo contains the source code for our bot that manages time and other funct
 
 <center>
 
-![Discord](https://img.shields.io/discord/843086218120134666?label=Join%20us&logo=discord&logoColor=white&style=for-the-badge)
+[![Discord](https://img.shields.io/discord/843086218120134666?label=Join%20us&logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/bcx7vwFXJG)
 </center>
 
 ## How to run the bot locally
