@@ -128,5 +128,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-firebase.json
+# MAC file
 .DS_Store
