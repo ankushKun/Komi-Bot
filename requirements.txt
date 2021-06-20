@@ -1,0 +1,7 @@
+discord.py>=1.7.2
+pytz
+pyrebase4
+Pillow
+flask
+numpy
+python-decouple
