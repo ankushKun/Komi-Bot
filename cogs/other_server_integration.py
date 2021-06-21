@@ -26,8 +26,8 @@ class OSI(commands.Cog):
                     role1 = guild.get_role(SERVERS[guild_id][0])  # STUDYING ROLE
                     role2 = guild.get_role(SERVERS[guild_id][1])  # NORMAL ROLE
                     m = guild.get_member(member.id)
-                    await m.add_roles(role1)
                     await m.remove_roles(role2)
+                    await m.add_roles(role1)
 
         elif after.channel == None and before.channel.category_id in study_categ_ids:
             # WHEN SOMEONE JOINS A STUDY CHANNEL
