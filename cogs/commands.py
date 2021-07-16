@@ -5,6 +5,7 @@ from datetime import datetime
 from pytz import timezone
 import json
 from decouple import config as env
+from DiscordUtils.Pagination import AutoEmbedPaginator
 
 LEVELS = [10, 50, 100, 200, 300, 400, 500, 1000, 2000, 5000]
 
@@ -20,6 +21,8 @@ else:
     firebase = pyrebase.initialize_app(json.loads(env("FIREBASE_CONFIG")))
 db = firebase.database()
 
+SERVERS = config["INTEGRATIONS"]
+
 """ DATABASE STRUCTURE
 TIMINGS:
     USER_ID:
@@ -27,6 +30,12 @@ TIMINGS:
         P24H:int
         P7D:int
         P1M:int
+        OSI:
+            GUILD_IDS:
+                TOTAL:int
+                P24H:int
+                P7D:int
+                P1M:int
 """
 
 # CONVERTS MINUTES INTO HOURS,MINUTES
@@ -63,13 +72,36 @@ class Cmds(commands.Cog):
                 mins_hours(t["P1M"]),
             )
 
-        desc = f"Total : {total[0]} Hrs {total[1]} Mins\nToday : {daily[0]} Hrs {daily[1]} Mins\nThis Week : {weekly[0]} Hrs {weekly[1]} Mins\nThis month : {monthly[0]} Hrs {monthly[1]} Mins"
-        emb = discord.Embed(
-            title=f"STATS FOR {user}",
-            description=f"```\n{desc}\n```",
-            color=0xFFFFFF,
-        )
-        await ctx.send(embed=emb)
+            desc = f"Total : {total[0]} Hrs {total[1]} Mins\nToday : {daily[0]} Hrs {daily[1]} Mins\nThis Week : {weekly[0]} Hrs {weekly[1]} Mins\nThis month : {monthly[0]} Hrs {monthly[1]} Mins"
+            emb1 = discord.Embed(
+                title=f"STATS FOR {user} in Komi San wants you to study",
+                description=f"```\n{desc}\n```",
+                color=0xFFFFFF,
+            )
+
+            OSI = db.child("TIMINGS").child(user.id).child("OSI").get().val()
+            if OSI == None:
+                await ctx.send(embed=emb1)
+                return
+            else:
+                time_embeds = [emb1]
+                paginator = AutoEmbedPaginator(ctx)
+                for guild_id in OSI:
+                    total, daily, weekly, monthly = (
+                        mins_hours(OSI[guild_id]["TOTAL"]),
+                        mins_hours(OSI[guild_id]["P24H"]),
+                        mins_hours(OSI[guild_id]["P7D"]),
+                        mins_hours(OSI[guild_id]["P1M"]),
+                    )
+
+                    desc = f"Total : {total[0]} Hrs {total[1]} Mins\nToday : {daily[0]} Hrs {daily[1]} Mins\nThis Week : {weekly[0]} Hrs {weekly[1]} Mins\nThis month : {monthly[0]} Hrs {monthly[1]} Mins"
+                    emb = discord.Embed(
+                        title=f"STATS FOR {user} in {SERVERS[str(guild_id)]['NAME']}",
+                        description=f"```\n{desc}\n```",
+                        color=0xFFFFFF,
+                    )
+                    time_embeds.append(emb)
+                await paginator.run(time_embeds)
 
     @commands.command(aliases=["lb"])
     async def leaderboard(self, ctx, timer="DAY"):

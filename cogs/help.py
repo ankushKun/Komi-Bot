@@ -19,6 +19,8 @@ prefix : `\`
 `studytime`
 aliases = [`st`]
 shows the time spent in study channels for the past 24 hours, 7 days and 1 month
+`Other Server Stats are under development and might have bugs
+If you find that your time is not being counted try leaving and rejoining the voice channel`
 
 `leaderboard`
 aliases = [`lb`]

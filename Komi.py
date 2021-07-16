@@ -1,7 +1,8 @@
 import discord
 from discord.ext import commands
 import os
-from keep_alive import keep_alive
+
+# from keep_alive import keep_alive
 import json
 from datetime import datetime
 from pytz import timezone
@@ -70,5 +71,5 @@ async def reload_cogs(ctx):
     await ctx.send("> Komi san loaded cogs")
 
 
-keep_alive()
+# keep_alive()
 bot.run(BOT_TOKEN)

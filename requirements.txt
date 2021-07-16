@@ -5,3 +5,4 @@ Pillow
 flask
 numpy
 python-decouple
+DiscordUtils
