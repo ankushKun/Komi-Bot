@@ -84,7 +84,10 @@ class Mesages(commands.Cog):
                 if after.channel.category_id == config["CATEGORY"]["PRIVATE"]:
                     await member.edit(mute=False)
             else:
-                await member.edit(mute=False)
+                try:
+                    await member.edit(mute=False)
+                except:
+                    pass
 
         elif after.channel == None:
             # WHEN SOMEONE LEAVES A STUDY CHANNEL

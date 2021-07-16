@@ -67,7 +67,7 @@ class Welcome(commands.Cog):
         bg_img.save(PATH)
         image_file = discord.File(PATH)
         await CHANNEL.send(WELCOME_MESSAGE.format(member.mention), file=image_file)
-        os.remove("PATH")
+        os.remove(PATH)
 
 
 def setup(bot):
