@@ -61,9 +61,9 @@ class Timers(commands.Cog):
         for lvl in level:
             self.LEVEL_ROLES.append(self.GUILD.get_role(level[lvl]))
 
-        # self.update_counter.start()
-        # self.add_minutes.start()
-        # self.reset.start()
+        self.update_counter.start()
+        self.add_minutes.start()
+        self.reset.start()
         self.started = False
 
     def get_vc_members(self):
