@@ -65,12 +65,15 @@ class Cmds(commands.Cog):
         if t == None:
             total, daily, weekly, monthly = (0, 0), (0, 0), (0, 0), (0, 0)
         else:
-            total, daily, weekly, monthly = (
-                mins_hours(t["TOTAL"]),
-                mins_hours(t["P24H"]),
-                mins_hours(t["P7D"]),
-                mins_hours(t["P1M"]),
-            )
+            try:
+                total, daily, weekly, monthly = (
+                    mins_hours(t["TOTAL"]),
+                    mins_hours(t["P24H"]),
+                    mins_hours(t["P7D"]),
+                    mins_hours(t["P1M"]),
+                )
+            except:
+                total, daily, weekly, monthly = (0, 0), (0, 0), (0, 0), (0, 0)
 
         desc = f"Total : {total[0]} Hrs {total[1]} Mins\nToday : {daily[0]} Hrs {daily[1]} Mins\nThis Week : {weekly[0]} Hrs {weekly[1]} Mins\nThis month : {monthly[0]} Hrs {monthly[1]} Mins"
         emb1 = discord.Embed(
