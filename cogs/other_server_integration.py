@@ -52,8 +52,11 @@ class OSI(commands.Cog):
                         SERVERS[str(server.id)]["NORMAL"]
                     )  # NORMAL ROLE
                     m = server.get_member(member.id)
-                    await m.remove_roles(role2)
-                    await m.add_roles(role1)
+                    try:
+                        await m.remove_roles(role2)
+                        await m.add_roles(role1)
+                    except:
+                        pass
 
         async def remove_studying():
             for server in common_servers:
@@ -65,8 +68,11 @@ class OSI(commands.Cog):
                         SERVERS[str(server.id)]["NORMAL"]
                     )  # NORMAL ROLE
                     m = server.get_member(member.id)
-                    await m.remove_roles(role1)
-                    await m.add_roles(role2)
+                    try:
+                        await m.remove_roles(role1)
+                        await m.add_roles(role2)
+                    except:
+                        pass
 
         ### VC IN KOMI SAN
         if after.channel != None and after.channel.category_id in study_categ_ids:
