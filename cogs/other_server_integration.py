@@ -42,9 +42,7 @@ class OSI(commands.Cog):
             return
         study_categ_ids = config["CATEGORY"].values()
 
-        ### VC IN KOMI SAN
-        if after.channel != None and after.channel.category_id in study_categ_ids:
-            # WHEN SOMEONE JOINS A STUDY CHANNEL
+        async def give_studying():
             for server in common_servers:
                 if str(server.id) in SERVERS:
                     role1 = server.get_role(
@@ -57,9 +55,7 @@ class OSI(commands.Cog):
                     await m.remove_roles(role2)
                     await m.add_roles(role1)
 
-        elif after.channel == None and before.channel.category_id in study_categ_ids:
-            # WHEN SOMEONE LEAVES A STUDY CHANNEL
-            # REMOVE ROLE ON OTHER SERVER
+        async def remove_studying():
             for server in common_servers:
                 if str(server.id) in SERVERS:
                     role1 = server.get_role(
@@ -72,6 +68,16 @@ class OSI(commands.Cog):
                     await m.remove_roles(role1)
                     await m.add_roles(role2)
 
+        ### VC IN KOMI SAN
+        if after.channel != None and after.channel.category_id in study_categ_ids:
+            # WHEN SOMEONE JOINS A STUDY CHANNEL
+            give_studying()
+
+        elif after.channel == None and before.channel.category_id in study_categ_ids:
+            # WHEN SOMEONE LEAVES A STUDY CHANNEL
+            # REMOVE ROLE ON OTHER SERVER
+            remove_studying()
+
         # WHEN JOINED A STUDY VC ON ANOTHER SERVER
         if after.channel != None and str(after.channel.guild.id) in SERVERS:
             if (
@@ -82,6 +88,7 @@ class OSI(commands.Cog):
                     f"**{member}** joined `{after.channel}` in **{after.channel.guild}**"
                 )
                 self.studying.append((member.id, after.channel.guild.id))
+                give_studying()
 
         # WHEN LEFT A STUDY VC ON ANOTHER SERVER
         elif (
@@ -97,8 +104,7 @@ class OSI(commands.Cog):
                     f"**{member}** left `{before.channel}` in **{before.channel.guild}**"
                 )
                 self.studying.remove((member.id, before.channel.guild.id))
-
-        print(set(self.studying))
+                remove_studying()
 
     @tasks.loop(minutes=config["TIMER_INTERVAL"])
     async def OSI_add_mins(self):
@@ -140,8 +146,11 @@ class OSI(commands.Cog):
         if now.hour == 0:
             times = dict(db.child("TIMINGS").get().val())
             for id_ in times:  # USER IDS
-                for server_ in times[id_]["OSI"]:  # SERVER IDS IN USERS ID OSI
-                    times[id_]["OSI"][server_]["P24H"] = 0
+                try:
+                    for server_ in times[id_]["OSI"]:  # SERVER IDS IN USERS ID OSI
+                        times[id_]["OSI"][server_]["P24H"] = 0
+                except:
+                    continue
             db.child("TIMINGS").set(times)
             await self.BOT_CHN.send(
                 f"> `[OSI]` reset last 24 hours timer at `{datetime.now(timezone('GMT'))} GMT`"
@@ -149,8 +158,11 @@ class OSI(commands.Cog):
             if now.weekday() == 0:
                 times = dict(db.child("TIMINGS").get().val())
                 for id_ in times:  # USER IDS
-                    for server_ in times[id_]["OSI"]:  # SERVER IDS IN USERS ID OSI
-                        times[id_]["OSI"][server_]["P7D"] = 0
+                    try:
+                        for server_ in times[id_]["OSI"]:  # SERVER IDS IN USERS ID OSI
+                            times[id_]["OSI"][server_]["P7D"] = 0
+                    except:
+                        continue
                 db.child("TIMINGS").set(times)
                 await self.BOT_CHN.send(
                     f"> `[OSI]` reset last 7 days timer at `{datetime.now(timezone('GMT'))} GMT`"
@@ -158,12 +170,57 @@ class OSI(commands.Cog):
             if now.day == 1:
                 times = dict(db.child("TIMINGS").get().val())
                 for id_ in times:  # USER IDS
-                    for server_ in times[id_]["OSI"]:  # SERVER IDS IN USERS ID OSI
-                        times[id_]["OSI"][server_]["P1M"] = 0
+                    try:
+                        for server_ in times[id_]["OSI"]:  # SERVER IDS IN USERS ID OSI
+                            times[id_]["OSI"][server_]["P1M"] = 0
+                    except:
+                        continue
                 db.child("TIMINGS").set(times)
                 await self.BOT_CHN.send(
                     f"> `[OSI]` reset last 1 months timer at `{datetime.now(timezone('GMT'))} GMT`"
                 )
+
+    @commands.command()
+    @commands.is_owner()
+    async def OSI_manualreset(self, ctx, which):
+        if which == "day":
+            times = dict(db.child("TIMINGS").get().val())
+            for id_ in times:  # USER IDS
+                try:
+                    for server_ in times[id_]["OSI"]:  # SERVER IDS IN USERS ID OSI
+                        times[id_]["OSI"][server_]["P24H"] = 0
+                except:
+                    continue
+            db.child("TIMINGS").set(times)
+            await self.BOT_CHN.send(
+                f"> `[OSI]` manual reset last 24 hours timer at `{datetime.now(timezone('GMT'))} GMT`"
+            )
+        elif which == "week":
+            times = dict(db.child("TIMINGS").get().val())
+            for id_ in times:  # USER IDS
+                try:
+                    for server_ in times[id_]["OSI"]:  # SERVER IDS IN USERS ID OSI
+                        times[id_]["OSI"][server_]["P7D"] = 0
+                except:
+                    continue
+            db.child("TIMINGS").set(times)
+            await self.BOT_CHN.send(
+                f"> `[OSI]` reset last 7 days timer at `{datetime.now(timezone('GMT'))} GMT`"
+            )
+        elif which == "month":
+            times = dict(db.child("TIMINGS").get().val())
+            for id_ in times:  # USER IDS
+                try:
+                    for server_ in times[id_]["OSI"]:  # SERVER IDS IN USERS ID OSI
+                        times[id_]["OSI"][server_]["P1M"] = 0
+                except:
+                    continue
+            db.child("TIMINGS").set(times)
+            await self.BOT_CHN.send(
+                f"> `[OSI]` reset last 1 months timer at `{datetime.now(timezone('GMT'))} GMT`"
+            )
+        else:
+            await ctx.send("day | week | month")
 
 
 def setup(bot):

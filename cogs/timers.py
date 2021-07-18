@@ -97,7 +97,8 @@ class Timers(commands.Cog):
             )
         else:
             for key in t:
-                t[key] = t[key] + mins_to_add
+                if key != "OSI":
+                    t[key] = t[key] + mins_to_add
             db.child("TIMINGS").child(m.id).set(t)
 
             # UPDATE LEVEL ROLES
