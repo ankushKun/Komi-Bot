@@ -31,6 +31,17 @@ class OSI(commands.Cog):
         self.OSI_add_mins.start()
         self.OSI_reset.start()
 
+    def OSI_get_studying(self):
+        studying = []
+        for server_id in SERVERS:
+            server = self.bot.get_guild(int(server_id))
+            for vc in server.voice_channels:
+                if vc.category_id == SERVERS[server_id]["CATEGORY"]:
+                    for mem in vc.members:
+                        if not mem.bot:
+                            studying.append((mem.id, server.id))
+        return studying
+
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
         common_servers = member.mutual_guilds
@@ -42,11 +53,10 @@ class OSI(commands.Cog):
             return
         study_categ_ids = config["CATEGORY"].values()
 
-        ### VC IN KOMI SAN
-        if after.channel != None and after.channel.category_id in study_categ_ids:
-            # WHEN SOMEONE JOINS A STUDY CHANNEL
+        async def give_studying():
             for server in common_servers:
                 if str(server.id) in SERVERS:
+                    print(server)
                     role1 = server.get_role(
                         SERVERS[str(server.id)]["STUDYING"]
                     )  # STUDYING ROLE
@@ -54,23 +64,40 @@ class OSI(commands.Cog):
                         SERVERS[str(server.id)]["NORMAL"]
                     )  # NORMAL ROLE
                     m = server.get_member(member.id)
-                    await m.remove_roles(role2)
-                    await m.add_roles(role1)
+                    print(m, role1, role2)
+                    try:
+                        await m.remove_roles(role2)
+                        await m.add_roles(role1)
+                    except:
+                        continue
+
+        async def take_studying():
+            for server in common_servers:
+                if str(server.id) in SERVERS:
+                    print(server)
+                    role1 = server.get_role(
+                        SERVERS[str(server.id)]["STUDYING"]
+                    )  # STUDYING ROLE
+                    role2 = server.get_role(
+                        SERVERS[str(server.id)]["NORMAL"]
+                    )  # NORMAL ROLE
+                    m = server.get_member(member.id)
+                    print(m, role1, role2)
+                    try:
+                        await m.add_roles(role2)
+                        await m.remove_roles(role1)
+                    except:
+                        continue
+
+        ### VC IN KOMI SAN
+        if after.channel != None and after.channel.category_id in study_categ_ids:
+            # WHEN SOMEONE JOINS A STUDY CHANNEL
+            await give_studying()
 
         elif after.channel == None and before.channel.category_id in study_categ_ids:
             # WHEN SOMEONE LEAVES A STUDY CHANNEL
             # REMOVE ROLE ON OTHER SERVER
-            for server in common_servers:
-                if str(server.id) in SERVERS:
-                    role1 = server.get_role(
-                        SERVERS[str(server.id)]["STUDYING"]
-                    )  # STUDYING ROLE
-                    role2 = server.get_role(
-                        SERVERS[str(server.id)]["NORMAL"]
-                    )  # NORMAL ROLE
-                    m = server.get_member(member.id)
-                    await m.remove_roles(role1)
-                    await m.add_roles(role2)
+            await take_studying()
 
         # WHEN JOINED A STUDY VC ON ANOTHER SERVER
         if after.channel != None and str(after.channel.guild.id) in SERVERS:
@@ -81,18 +108,7 @@ class OSI(commands.Cog):
                 await self.BOT_CHN.send(
                     f"**{member}** joined `{after.channel}` in **{after.channel.guild}**"
                 )
-                self.studying.append((member.id, after.channel.guild.id))
-                for server in common_servers:
-                    if str(server.id) in SERVERS:
-                        role1 = server.get_role(
-                            SERVERS[str(server.id)]["STUDYING"]
-                        )  # STUDYING ROLE
-                        role2 = server.get_role(
-                            SERVERS[str(server.id)]["NORMAL"]
-                        )  # NORMAL ROLE
-                        m = server.get_member(member.id)
-                        await m.remove_roles(role1)
-                        await m.add_roles(role2)
+                await give_studying()
 
         # WHEN LEFT A STUDY VC ON ANOTHER SERVER
         elif (
@@ -107,13 +123,13 @@ class OSI(commands.Cog):
                 await self.BOT_CHN.send(
                     f"**{member}** left `{before.channel}` in **{before.channel.guild}**"
                 )
-                self.studying.remove((member.id, before.channel.guild.id))
+                await take_studying()
 
     @tasks.loop(minutes=config["TIMER_INTERVAL"])
     async def OSI_add_mins(self):
         mins_to_add = config["TIMER_INTERVAL"]
-
-        for data in self.studying:
+        studying = self.OSI_get_studying()
+        for data in studying:
             user_id = data[0]
             server_id = data[1]
             t = (
