@@ -77,12 +77,12 @@ class OSI(commands.Cog):
         ### VC IN KOMI SAN
         if after.channel != None and after.channel.category_id in study_categ_ids:
             # WHEN SOMEONE JOINS A STUDY CHANNEL
-            give_studying()
+            await give_studying()
 
         elif after.channel == None and before.channel.category_id in study_categ_ids:
             # WHEN SOMEONE LEAVES A STUDY CHANNEL
             # REMOVE ROLE ON OTHER SERVER
-            remove_studying()
+            await remove_studying()
 
         # WHEN JOINED A STUDY VC ON ANOTHER SERVER
         if after.channel != None and str(after.channel.guild.id) in SERVERS:
@@ -94,7 +94,7 @@ class OSI(commands.Cog):
                     f"**{member}** joined `{after.channel}` in **{after.channel.guild}**"
                 )
                 self.studying.append((member.id, after.channel.guild.id))
-                give_studying()
+                await give_studying()
 
         # WHEN LEFT A STUDY VC ON ANOTHER SERVER
         elif (
@@ -110,7 +110,7 @@ class OSI(commands.Cog):
                     f"**{member}** left `{before.channel}` in **{before.channel.guild}**"
                 )
                 self.studying.remove((member.id, before.channel.guild.id))
-                remove_studying()
+                await remove_studying()
 
     @tasks.loop(minutes=config["TIMER_INTERVAL"])
     async def OSI_add_mins(self):
