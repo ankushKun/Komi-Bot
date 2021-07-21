@@ -55,6 +55,9 @@ class Timers(commands.Cog):
         self.BOT_CHANNEL = discord.utils.get(
             self.GUILD.text_channels, id=config["CHANNELS"]["TEXT"]["KOMI_MESSAGES"]
         )
+        self.STUDY_CHANNEL = discord.utils.get(
+            self.GUILD.text_channels, id=config["CHANNELS"]["TEXT"]["STUDY_CHAT"]
+        )
 
         level = config["ROLES"]["LEVEL"]
         self.LEVEL_ROLES = []
@@ -64,6 +67,7 @@ class Timers(commands.Cog):
         self.update_counter.start()
         self.add_minutes.start()
         self.reset.start()
+        self.wotah_pings.start()
         self.started = False
 
     def get_vc_members(self):
@@ -162,6 +166,20 @@ class Timers(commands.Cog):
         await self.BOT_CHANNEL.send(
             f"> updated timings [`{datetime.now(timezone('GMT'))} GMT`]"
         )
+
+    # WATER PING
+    @tasks.loop(minutes=60)
+    async def wotah_pings(self):
+        ping_role_id = config["ROLES"]["WATER_PING"]
+        hist = await self.STUDY_CHANNEL.history(oldest_first=False, limit=250).flatten()
+        for message in hist:
+            if (
+                message.author.id == self.bot.user.id
+                and str(ping_role_id) in message.content
+            ):
+                await message.delete()
+        img = discord.File(open("images/komi_water_1.png", "rb"), "img.png")
+        await self.STUDY_CHANNEL.send(f"<@&{ping_role_id}>", file=img)
 
     #########################################
 
