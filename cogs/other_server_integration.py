@@ -48,7 +48,7 @@ class OSI(commands.Cog):
         if (
             member.bot
             or (before.channel == after.channel)
-            or not config["GUILD_ID"] in [s.id for s in common_servers]
+            # or not config["GUILD_ID"] in [s.id for s in common_servers]
         ):
             return
         study_categ_ids = config["CATEGORY"].values()
