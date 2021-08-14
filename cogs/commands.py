@@ -128,7 +128,7 @@ class Cmds(commands.Cog):
             try:
                 member = await self.GUILD.fetch_member(mem_id)
             except Exception:
-                member = "UNKNOWN MEMBER"
+                continue
             hrs, mins = mins_hours(lb[mem_id][t])
             position = list(lb.keys()).index(mem_id) + 1
             if position > 10:
