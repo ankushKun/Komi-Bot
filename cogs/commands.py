@@ -124,13 +124,14 @@ class Cmds(commands.Cog):
             return
         lb = OrderedDict(reversed(list(lb.items())))  # REVERSE THE SORTED DICT
         desc = f""
+        position =0
         for mem_id in lb:
             try:
                 member = await self.GUILD.fetch_member(mem_id)
             except Exception:
                 continue
             hrs, mins = mins_hours(lb[mem_id][t])
-            position = list(lb.keys()).index(mem_id) + 1
+            position +=1 
             if position > 10:
                 break
             if mem_id == str(ctx.author.id):
